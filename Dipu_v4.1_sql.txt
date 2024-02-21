@@ -1,0 +1,364 @@
+DROP TABLE IF EXISTS master_date;
+CREATE TABLE master_date(
+  master_date_id BIGINT NOT NULL AUTO_INCREMENT,
+  ob_cash DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  ob_bank DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  ob_adv DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  ob_tot DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cash_rec DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cash_exp DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cash_adv DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  bank_rec DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  bank_exp DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  bank_adv DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cb_cash DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cb_bank DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cb_adv DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  tot_cb DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  entry_date DATE DEFAULT NULL,
+  PRIMARY KEY (master_date_id));
+
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS loadMasterTbl$$
+CREATE PROCEDURE loadMasterTbl (IN check_date DATE)
+BEGIN
+	DECLARE finished_curRecords INTEGER DEFAULT 0;
+	DECLARE finished_curRecordsOb INTEGER DEFAULT 0;
+	
+	DECLARE data_scheme_name varchar(100) DEFAULT "";
+	DECLARE data_vch_type varchar(100) DEFAULT "";
+	DECLARE data_vch_ty varchar(100) DEFAULT "";
+	DECLARE data_amount_rec DECIMAL(15,3) DEFAULT 0;
+	DECLARE data_amount_pay DECIMAL(15,3) DEFAULT 0;
+	DECLARE data_acc_id varchar(100) DEFAULT "";
+	DECLARE data_vch_date varchar(100) DEFAULT "";
+	
+	DECLARE master_data_CR DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_CP DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_BR DECIMAL(15,3) DEFAULT 0;
+	
+	DECLARE master_data_bank_exp DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_bank_rec DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_bank_adv DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_cash_rec DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_cash_exp DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_cash_adv DECIMAL(15,3) DEFAULT 0;
+	DECLARE obdata_budget_name varchar(100) DEFAULT "";
+	DECLARE obdata_scheme_name varchar(100) DEFAULT "";
+	DECLARE obdata_amt_rec DECIMAL(15,3) DEFAULT 0;
+	DECLARE obdata_amt_pay DECIMAL(15,3) DEFAULT 0;
+	
+	DECLARE master_data_AR DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_AP DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_PR DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_PP DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_data_trxn_date DATE;
+	DECLARE master_data_trxn_name varchar(255) DEFAULT "";
+	DECLARE master_data_insert_flag INTEGER DEFAULT 0;
+	
+	DECLARE master_ob_cash DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_ob_bank DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_ob_adv DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_ob_pl DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_ob_tot DECIMAL(15,3) DEFAULT 0;
+	
+	DECLARE master_cb_cash DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_cb_bank DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_cb_pl DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_cb_adv DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_tot_cb DECIMAL(15,3) DEFAULT 0;
+
+	DECLARE master_ob_cash_next DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_ob_bank_next DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_ob_pl_next DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_ob_adv_next DECIMAL(15,3) DEFAULT 0;
+	DECLARE master_ob_tot_next DECIMAL(15,3) DEFAULT 0;
+
+
+	begin
+		-- declare cursor for fetching total received and total paid record from obmaster_master_view
+		DECLARE cursorRecordForOb CURSOR FOR SELECT scheme_name, budget_name, amt_rec, amt_pay FROM obmaster_master_view;
+
+		-- declare NOT FOUND handler
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished_curRecordsOb = 1;
+	
+		OPEN cursorRecordForOb;
+		getTotalObSum: LOOP
+			FETCH  cursorRecordForOb INTO obdata_scheme_name, obdata_budget_name, obdata_amt_rec, obdata_amt_pay;
+			IF finished_curRecordsOb = 1 THEN 
+				LEAVE getTotalObSum;
+			END IF;
+			SET master_ob_tot = master_ob_tot + obdata_amt_rec;
+			IF SUBSTR(obdata_budget_name, 1, 3) = "CAS" THEN
+				SET master_ob_cash = master_ob_cash + obdata_amt_rec;
+			ELSEIF SUBSTR(obdata_budget_name, 1, 3) = "BAN" THEN
+				SET master_ob_bank = master_ob_bank + obdata_amt_rec;
+			ELSEIF SUBSTR(obdata_budget_name, 1, 3) = "ADV" THEN
+				SET master_ob_adv = master_ob_adv + obdata_amt_rec;
+			ELSEIF SUBSTR(obdata_budget_name, 1, 3) = "PL" THEN
+				SET master_ob_pl = master_ob_pl + obdata_amt_rec;
+			END IF;
+		END LOOP getTotalObSum;	
+		/*INSERT INTO master_date (ob_cash, ob_bank, ob_adv, ob_pl,ob_tot, scheme_name, cash_rev, cash_exp, bank_rev, bank_exp, pl_rev, pl_exp, adv_rev, adv_exp, entry_date) 
+		values (master_ob_cash, master_ob_bank, master_ob_adv, master_ob_pl, master_ob_tot, data_scheme_name, master_data_CR, master_data_CP, master_data_BR, 
+		master_data_BP, master_data_PR, master_data_PP, master_data_AR, master_data_AP, check_date);
+		INSERT INTO master_date (ob_cash, ob_bank, ob_adv, ob_pl,ob_tot, scheme_name) values 
+		(master_ob_cash, master_ob_bank, master_ob_adv, master_ob_pl, master_ob_tot, 'SCHEME1');*/
+		CLOSE cursorRecordForOb;
+	end;
+
+	begin
+	-- declare cursor for fetching records for a particular date from outward_vchentry_view
+	DECLARE curRecordsForDate CURSOR FOR SELECT scheme_name, vch_ty, vch_type, amount_rec, amount_pay, acc_id, vch_date 
+	FROM inword_vchentry_view WHERE vch_date = check_date;
+
+	-- declare NOT FOUND handler
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished_curRecords = 1;
+	
+
+	OPEN curRecordsForDate;
+	getCurRecordsForDate: LOOP
+		FETCH curRecordsForDate INTO data_scheme_name, data_vch_ty, data_vch_type, data_amount_rec, data_amount_pay, data_acc_id,  data_vch_date;
+		IF finished_curRecords = 1 THEN 
+			LEAVE getCurRecordsForDate;
+		END IF;
+		-- Build getCurRecordsForDate list.
+		-- Add various schemes in IF and ELSEIF loops.
+		IF (data_vch_type = "BP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "EXP") THEN 
+			SET master_data_bank_exp = master_data_bank_exp + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "BR" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "BAN") THEN 
+			SET master_data_bank_rec = master_data_bank_rec + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "BP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "ADV") THEN 
+			SET master_data_bank_adv = master_data_bank_adv + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "BP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "LIB") THEN 
+			SET master_data_bank_adv = master_data_bank_adv + data_amount_rec;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "CR" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "CAS") THEN 
+			SET master_data_cash_rec = master_data_cash_rec + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "CP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "EXP") THEN 
+			SET master_data_cash_exp = master_data_cash_exp + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "CP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "ADV") THEN 
+			SET master_data_cash_adv = master_data_cash_adv + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "CP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "LIB") THEN 
+			SET master_data_cash_adv = master_data_cash_adv + data_amount_rec;
+			SET master_data_insert_flag = 1;
+		
+		END IF;
+		SET master_data_trxn_date = data_vch_date;
+		SET master_data_trxn_name = CONCAT("Trxns on Date: ", check_date);
+	END LOOP getCurRecordsForDate;
+	IF master_data_insert_flag = 1 THEN
+		IF (NOT EXISTS (SELECT master_date_id from master_date)) THEN
+			SET master_cb_cash = ((master_ob_cash+master_data_cash_rec)-master_data_cash_exp);
+			SET master_cb_bank = ((master_ob_bank+master_data_bank_rec)-master_data_bank_exp);
+			/*SET master_cb_pl = ((master_ob_pl+master_data_PR)-master_data_PP); add this to master_tot_cb*/
+			SET master_cb_adv = ((master_ob_adv+master_data_bank_adv)+master_data_cash_adv);
+			SET master_tot_cb = (master_cb_cash+master_cb_bank+master_cb_adv);
+			
+			INSERT INTO master_date (ob_cash, ob_bank, ob_adv, ob_tot, cash_rec, cash_exp, cash_adv, bank_rec, bank_exp, bank_adv, cb_cash, cb_bank, cb_adv, tot_cb, entry_date) values (master_ob_cash, master_ob_bank, master_ob_adv, master_ob_tot, master_data_cash_rec, master_data_cash_exp, master_data_cash_adv, master_data_bank_rec, master_data_bank_exp, master_data_bank_adv, master_cb_cash, master_cb_bank, master_cb_adv, master_tot_cb, check_date);
+		ELSE
+			SELECT cb_cash, cb_bank, cb_adv, tot_cb INTO master_ob_cash_next, master_ob_bank_next, master_ob_adv_next, master_ob_tot_next FROM master_date WHERE entry_date=(SELECT entry_date FROM master_date order by entry_date DESC LIMIT 1);
+		
+			SET master_cb_cash = ((master_ob_cash_next+master_data_cash_rec)-master_data_cash_exp);
+			SET master_cb_bank = ((master_ob_bank_next+master_data_bank_rec)-master_data_bank_exp);
+			/*SET master_cb_pl = ((master_ob_pl_next+master_data_PR)-master_data_PP); add this to master_tot_cb*/
+			SET master_cb_adv = ((master_ob_adv_next+master_data_bank_adv)+master_data_cash_adv);
+			SET master_tot_cb = (master_cb_cash+master_cb_bank+master_cb_adv);
+			
+			INSERT INTO master_date (ob_cash, ob_bank, ob_adv, ob_tot, cash_rec, cash_exp, cash_adv, bank_rec, bank_exp, bank_adv, cb_cash, cb_bank, cb_adv, tot_cb, entry_date) values (master_ob_cash_next, master_ob_bank_next, master_ob_adv_next, master_ob_tot_next, master_data_cash_rec, master_data_cash_exp, master_data_cash_adv, master_data_bank_rec, master_data_bank_exp, master_data_bank_adv, master_cb_cash, master_cb_bank, master_cb_adv, master_tot_cb, check_date);
+		END IF;
+	END IF;
+	CLOSE curRecordsForDate;
+	end;
+	
+END$$
+DELIMITER ;
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS loadMasterTbl_dated$$
+CREATE PROCEDURE loadMasterTbl_dated(IN start_date DATE, IN end_date DATE, IN scheme_name_input varchar(255))
+BEGIN
+	DECLARE looping_date DATE;
+	DECLARE start_date_inword DATE;
+	DECLARE end_date_inword DATE;
+
+	CALL reset_loadMasterTbl(scheme_name_input);
+	SELECT DISTINCT vch_date INTO start_date_inword FROM inword_vchentry_view ivv  order by ivv.vch_date ASC LIMIT 1;
+	SELECT DISTINCT vch_date INTO end_date_inword FROM inword_vchentry_view ivv  order by ivv.vch_date DESC LIMIT 1;
+	SET looping_date = start_date_inword;
+	WHILE looping_date <= end_date_inword DO
+	CALL loadMasterTbl(looping_date);	
+	/*// @a gives you the result of innerproc*/
+	SET looping_date = DATE_ADD(looping_date, INTERVAL 1 DAY);
+	END WHILE;
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS reset_loadMasterTbl$$
+CREATE PROCEDURE reset_loadMasterTbl(IN scheme_name_input varchar(255))
+BEGIN	
+	TRUNCATE TABLE master_date;
+	TRUNCATE TABLE inword_vchentry_view;
+	TRUNCATE TABLE obmaster_master_view;
+	
+	SET @scheme_name_input := scheme_name_input;
+	
+	SET @inword_vchentry_view = CONCAT("INSERT INTO inword_vchentry_view(scheme_name, vchno, vch_ty, vch_type, acc_id, account_desc, amount_rec, amount_pay, vch_date) SELECT scheme_name, vchno, vch_ty, vch_type, acc_id, account_desc, amount_rec, amount_pay, vch_date from  inword_vchentry where scheme_name = ? ORDER by vch_date");
+
+	SET @obmaster_master_view = CONCAT("INSERT INTO obmaster_master_view(scheme_id, scheme_name, budget_id, budget_name, acc_id, acc_name, 		amt_rec, amt_pay) SELECT scheme_id, scheme_name, budget_id, budget_name, acc_id, acc_name, amt_rec, amt_pay from  obmaster_master where scheme_name = ?");
+	
+	PREPARE stmt3 FROM @inword_vchentry_view;
+	EXECUTE stmt3 USING @scheme_name_input; -- <-- input for placeholder
+	DEALLOCATE PREPARE stmt3;
+
+	PREPARE stmt3 FROM @obmaster_master_view;
+	EXECUTE stmt3 USING @scheme_name_input; -- <-- input for placeholder
+	DEALLOCATE PREPARE stmt3;
+	
+END$$
+DELIMITER ;
+
+DROP TABLE IF EXISTS inword_vchentry_view;
+CREATE TABLE inword_vchentry_view(
+  `inword_view_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `scheme_name` varchar(45) NOT NULL,
+  `vchno` varchar(45) NOT NULL,
+  `vch_ty` varchar(45) NOT NULL,
+  `account_desc` varchar(45) NOT NULL,
+  `amount_rec` decimal(10,0) NOT NULL,
+  `amount_pay` decimal(10,0) NOT NULL,
+  `acc_id` varchar(45) NOT NULL,
+  `vch_type` varchar(45) NOT NULL,
+  `vch_date` date NOT NULL,
+   PRIMARY KEY (inword_view_id));
+
+DROP TABLE IF EXISTS obmaster_master_view;
+CREATE TABLE obmaster_master_view (
+  `obmaster_view_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `scheme_id` varchar(255) NOT NULL,
+  `scheme_name` varchar(255) NOT NULL,
+  `budget_id` varchar(255) NOT NULL,
+  `budget_name` varchar(255) NOT NULL,
+  `acc_id` varchar(255) NOT NULL,
+  `acc_name` varchar(255) NOT NULL,
+  `amt_rec` decimal(10,2) NOT NULL,
+  `amt_pay` decimal(10,2) NOT NULL,
+  PRIMARY KEY (obmaster_view_id)); 
+
+CALL copytbl();
+
+#SET @schemaList = ""; 
+#CALL loadMasterTbl('2023-02-04', @schemaList); 
+#SELECT @schemaList;
+
+#SET @schemaList = ""; 
+#CALL loadMasterTbl_dated('2023-02-03','2023-02-07', @schemaList);
+#SELECT @schemaList;
+
+#SET @schemaList = ""; 
+#CALL reset_loadMasterTbl('SCHEME1', @schemaList);
+#SELECT @schemaList;
+
+#SET @schemaList = ""; 
+CALL loadMasterTbl_dated('2023-02-21','2023-02-23', 'SCHEME1', @schemaList );
+#SELECT @schemaList;
+
+
+CALL loadMasterTbl_dated('2023-02-21','2023-02-23', 'SCHEME1');
+
+
+
+
+DROP TABLE IF EXISTS `daybook`;
+CREATE TABLE `daybook` (
+  `daybook_id` int NOT NULL AUTO_INCREMENT,
+  `group_uuid` VARCHAR(255) NOT NULL,
+  `receipt_vchno_date` DATE DEFAULT NULL,
+  `receipt_vch_no` varchar(45) NOT NULL,
+  `receipt_vch_ty` varchar(45) NOT NULL,
+  `receipt_vch_desc` varchar(45) NOT NULL,
+  `receipt_vch_amt` DECIMAL(15,3) DEFAULT 0,
+  `receipt_vch_close` varchar(45) NOT NULL,
+  `vch_pat` varchar(45) NOT NULL,
+  `payment_vch_date` DATE DEFAULT NULL,
+  `payment_vch_no` varchar(45) NOT NULL,
+  `payment_vch_desc` varchar(45) NOT NULL,
+  `payment_vch_amt` DECIMAL(15,3) DEFAULT 0,
+  `payment_vch_close` varchar(45) NOT NULL,
+  PRIMARY KEY (`daybook_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS loadDaybookTbl$$
+CREATE PROCEDURE loadDaybookTbl (IN start_date DATE, IN end_date DATE)
+BEGIN
+	DECLARE finished_cursorRecordForOutward INTEGER DEFAULT 0;
+	DECLARE finished_cursorRecordForInward INTEGER DEFAULT 0;
+
+	DECLARE outward_vch_no VARCHAR(100) DEFAULT "";
+	DECLARE outward_vch_type VARCHAR(100) DEFAULT "";
+	DECLARE outward_vch_desc VARCHAR(100) DEFAULT "";
+	DECLARE outward_amount DECIMAL(15,3) DEFAULT 0;
+	DECLARE outward_trxn_date DATE;
+
+	DECLARE inward_vch_no VARCHAR(100) DEFAULT "";
+	DECLARE inward_vch_type VARCHAR(100) DEFAULT "";
+	DECLARE inward_acc_desc VARCHAR(100) DEFAULT "";
+	DECLARE inward_amount_rec DECIMAL(15,3) DEFAULT 0;
+	DECLARE inward_amount_pay DECIMAL(15,3) DEFAULT 0;
+	DECLARE inward_trxn_date DATE;
+
+	DECLARE find_vchno_var VARCHAR(100) DEFAULT "";
+	DECLARE guid_group_by VARCHAR(100) DEFAULT "";
+
+	TRUNCATE TABLE daybook;
+	begin
+	-- declare cursor for fetching total received and total paid record from outward_vchentry. Move to outward_vchentry table not outward_vchentry_view
+		DECLARE cursorRecordForOutward CURSOR FOR SELECT vch_no, vch_type, vch_desc, total_Amount, vch_date FROM outward_vchentry_view;
+	-- declare NOT FOUND handler
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished_cursorRecordForOutward = 1;
+		OPEN cursorRecordForOutward;
+		getOutward: LOOP
+			FETCH  cursorRecordForOutward INTO outward_vch_no, outward_vch_type, outward_vch_desc, outward_amount, outward_trxn_date;
+			IF finished_cursorRecordForOutward = 1 THEN 
+				LEAVE getOutward;
+			END IF;
+			SET find_vchno_var = outward_vch_no;
+		END LOOP getOutward;
+		CLOSE cursorRecordForOutward;
+	end;
+	begin
+		-- declare cursor for fetching total received and total paid record from outward_vchentry. Move to outward_vchentry table not outward_vchentry_view
+		DECLARE cursorRecordForInward CURSOR FOR SELECT vchno , vch_type, account_desc, amount_rec, amount_pay, vch_date FROM inword_vchentry WHERE vchno = find_vchno_var;
+	
+		OPEN cursorRecordForInward;
+		getInward: LOOP
+			FETCH  cursorRecordForInward INTO inward_vch_no, inward_vch_type, inward_acc_desc, inward_amount_rec, inward_amount_pay, inward_trxn_date;
+			IF cursorRecordForInward = 1 THEN 
+				LEAVE getInward;
+			END IF;
+			SET guid_group_by = UUID(); 
+			INSERT INTO daybook (group_uuid, receipt_vchno_date, receipt_vch_no, receipt_vch_ty, receipt_vch_desc, receipt_vch_amt, receipt_vch_close, vch_pat, payment_vch_date,
+			payment_vch_no, payment_vch_desc, payment_vch_amt, payment_vch_close) values (guid_group_by, outward_trxn_date, outward_vch_no, outward_vch_type, outward_vch_desc,
+			outward_amount, 'close', 'pat', inward_trxn_date, inward_vch_no, inward_acc_desc, inward_amount_rec, 'close');
+		
+		END LOOP getInward;
+		CLOSE cursorRecordForInward;
+	end;
+END$$
+DELIMITER ;

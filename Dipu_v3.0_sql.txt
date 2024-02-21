@@ -1,0 +1,372 @@
+create TABLE scheme_master (scheme_master_id bigint not null auto_increment, scheme_name varchar(255), PRIMARY KEY(scheme_master_id));
+
+DROP TABLE IF EXISTS outward_vchentry;
+CREATE TABLE outward_vchentry(
+   outward_id BIGINT NOT NULL AUTO_INCREMENT,
+   scheme_name VARCHAR(255) NOT NULL,
+   vch_type VARCHAR(255) NOT NULL,
+   chq_no VARCHAR(255) NOT NULL,
+   chq_date DATE DEFAULT (CURRENT_DATE),
+   bank_name VARCHAR(255) NOT NULL,
+   vch_desc VARCHAR(255) NOT NULL,
+   amt_rec DECIMAL(15,3) NOT NULL,
+   amt_pay DECIMAL(15,3) NOT NULL,
+   vch_date DATE DEFAULT (CURRENT_DATE),
+   PRIMARY KEY (outward_id));
+   
+  INSERT INTO outward_vchentry(scheme_name, vch_type, chq_no, bank_name, vch_desc, amt_rec, amt_pay) VALUES 
+  ('SCHEME1','BP','2223/P/001','Bank1','Description1','1000','1000'),
+  ('SCHEME2','BP','2223/P/002','Bank2','OFFICE OF THE COLLECTOR & DISTRICT MAGISTRATE, KHORDHA','250000','250000'),
+  ('SCHEME1','BP','2223/P/003','Bank3','Grevance petition of Dr. Laxmidhar Jena, Mr-118, Maruti Residency At/poRaghunathpur, P.S. Nandankanan Bhubaneswar.','125000','125000'),
+  ('SCHEME2','BP','2223/P/004','Bank4','Description2','100000','100000'),
+  ('SCHEME3','BP','2223/P/005','Bank2','Description3','100000','100000'),
+  ('SCHEME2','BP','2223/P/006','Bank2','Description4','100000','100000'),
+  ('SCHEME1','BP','2223/P/007','Bank3','Description5','100000','100000'),
+  ('SCHEME1','BP','2223/P/008','Bank2','Description6','100000','100000'),
+  ('SCHEME4','BP','2223/P/009','Bank2','Description7','100000','100000'),
+  ('SCHEME2','BP','2223/P/010','Bank3','Description8','100000','100000'),
+  ('SCHEME1','BP','2223/P/011','Bank3','Description9','100000','100000'),
+  ('SCHEME4','BP','2223/P/012','Bank4','Description10','100000','100000'),
+  ('SCHEME3','BP','2223/P/013','Bank3','Description11','100000','100000'),
+  ('SCHEME4','BP','2223/P/014','Bank2','Description12','500000','500000'),
+  ('SCHEME3','BP','2223/P/015','Bank1','Description13','500000','500000'),
+  ('SCHEME2','BP','2223/P/016','Bank1','Description14','500000','500000'),
+  ('SCHEME2','BP','2223/P/017','Bank2','Description15','500000','500000'),
+  ('SCHEME1','BP','2223/P/018','Bank2','Description16','500000','500000'),
+  ('SCHEME1','CR','2223/R/002','Bank3','Description17','5000','5000'),
+  ('SCHEME4','BR','2223/R/003','Bank4','Description18','1000000','1000000'),
+  ('SCHEME3','BR','2223/R/004','Bank2','Description19','2500000','2500000'),
+  ('SCHEME2','BR','2223/R/001','Bank1','Description20','500000','500000');
+
+
+DROP TABLE IF EXISTS obmaster_master;
+CREATE TABLE obmaster_master (
+  obmaster_id BIGINT NOT NULL AUTO_INCREMENT,
+  scheme_id VARCHAR(255) NOT NULL,
+  scheme_name VARCHAR(255) NOT NULL,
+  budget_id VARCHAR(255) NOT NULL,
+  budget_name VARCHAR(255) NOT NULL,
+  acc_id VARCHAR(255) NOT NULL,
+  acc_name VARCHAR(255) NOT NULL,
+  vch_desc VARCHAR(255) NOT NULL,
+  amt_rec DECIMAL(15,3) NOT NULL,
+  amt_pay DECIMAL(15,3) NOT NULL,
+  vch_date DATE DEFAULT (CURRENT_DATE),
+  PRIMARY KEY (obmaster_id)); 
+  
+  INSERT INTO obmaster_master(scheme_id, scheme_name, budget_id, budget_name, acc_id, acc_name, vch_desc, amt_rec, amt_pay) VALUES 
+  ('STA-1','SCHEME1','BUGDET1','BANK','SBI_01','SBI','Description1',50000,0),
+  ('STA-1','SCHEME1','BUGDET1','CASH','PNB_01','PNB','Description1',100000,0),
+  ('STA-1','SCHEME1','BUGDET1','ADVANCE','CAN_01','CAN','Description1',4500,0),
+  ('STA-1','SCHEME3','BUGDET3','PL','GRA_25','GRA','Description3',0,0),
+  ('STA-1','SCHEME3','BUGDET3','PL','CAN_01','CAN','Description3',0,0),
+  ('STA-1','SCHEME2','BUGDET2','PL','DIS_28','DIS','Description2',0,0),
+  ('STA-1','SCHEME2','BUGDET2','BANK','TRA_30','TRA','Description2',0,0),
+  ('STA-1','SCHEME1','BUGDET1','BANK','SBI_01','SBI','Description1',50000,0),
+  ('STA-1','SCHEME1','BUGDET1','CASH','PNB_01','PNB','Description1',100000,0),
+  ('STA-1','SCHEME1','BUGDET1','CASH','CAN_01','CAN','Description1',4500,0),
+  ('STA-1','SCHEME3','BUGDET3','ADVANCE','GRA_25','GRA','Description3',0,0),
+  ('STA-1','SCHEME3','BUGDET3','ADVANCE','CAN_01','CAN','Description3',0,0),
+  ('STA-1','SCHEME2','BUGDET2','BANK','DIS_28','DIS','Description2',0,0),
+  ('STA-1','SCHEME2','BUGDET2','CASH','TRA_30','TRA','Description2',0,0),
+  ('STA-1','SCHEME1','BUGDET1','ADVANCE','SBI_01','SBI','Description1',50000,0),
+  ('STA-1','SCHEME1','BUGDET1','PL','PNB_01','PNB','Description1',100000,0),
+  ('STA-1','SCHEME1','BUGDET1','BANK','CAN_01','CAN','Description1',4500,0),
+  ('STA-1','SCHEME3','BUGDET3','CASH','GRA_25','GRA','Description3',0,0),
+  ('STA-1','SCHEME3','BUGDET3','ADVANCE','CAN_01','CAN','Description3',0,0),
+  ('STA-1','SCHEME2','BUGDET2','PL','DIS_28','DIS','Description2',0,0),
+  ('STA-1','SCHEME2','BUGDET2','BANK','TRA_30','TRA','Description2',0,0);
+  
+ DROP TABLE IF EXISTS vch_type;
+CREATE TABLE vch_type (vch_id int NOT NULL AUTO_INCREMENT, vch_type_name varchar(255) NOT NULL, PRIMARY KEY (vch_id)); 
+
+insert into vch_type (vch_type_name) values ('BR'), ('BP'), ('CR'), ('CP'), ('AR'), ('AP'), ('PR'), ('PP');
+
+ DROP TABLE IF EXISTS scheme_master;
+CREATE TABLE scheme_master (scheme_id int NOT NULL AUTO_INCREMENT, scheme_name_id varchar(255) NOT NULL, scheme_name varchar(255) NOT NULL, PRIMARY KEY (scheme_id)); 
+
+insert into scheme_master (scheme_name_id, scheme_name) VALUES ('STA-1', 'SCHEME1'), ('STA-11', 'SCHEME1'), 
+('STA-12', 'SCHEME1'), ('STA-111', 'SCHEME1'), ('STA-112', 'SCHEME1'), ('STA-2', 'SCHEME2'), ('STA-22', 'SCHEME2'), 
+('STA-22', 'SCHEME2'), ('STA-222', 'SCHEME2'), ('STA-212', 'SCHEME2');
+  
+  
+  DROP TABLE IF EXISTS master_date;
+CREATE TABLE master_date(
+  master_date_id BIGINT NOT NULL AUTO_INCREMENT,
+  ob_cash DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  ob_bank DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  ob_adv DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  ob_tot DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cash_rec DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cash_exp DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cash_adv DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  bank_rec DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  bank_exp DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  bank_adv DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cb_cash DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cb_bank DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  cb_adv DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  tot_cb DECIMAL(15,3) NOT NULL DEFAULT 0, 
+  entry_date DATE DEFAULT NULL,
+  PRIMARY KEY (master_date_id));
+
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS loadMasterTbl$$
+CREATE PROCEDURE loadMasterTbl (IN check_date DATE)
+BEGIN
+	DECLARE finished_curRecords INTEGER DEFAULT 0;
+	DECLARE finished_curRecordsOb INTEGER DEFAULT 0;
+	
+	DECLARE data_scheme_name varchar(100) DEFAULT "";
+	DECLARE data_vch_type varchar(100) DEFAULT "";
+	DECLARE data_vch_ty varchar(100) DEFAULT "";
+	DECLARE data_amount_rec BIGINT DEFAULT 0;
+	DECLARE data_amount_pay BIGINT DEFAULT 0;
+	DECLARE data_acc_id varchar(100) DEFAULT "";
+	DECLARE data_vch_date varchar(100) DEFAULT "";
+	
+	DECLARE master_data_CR BIGINT DEFAULT 0;
+	DECLARE master_data_CP BIGINT DEFAULT 0;
+	DECLARE master_data_BR BIGINT DEFAULT 0;
+	
+	DECLARE master_data_bank_exp BIGINT DEFAULT 0;
+	DECLARE master_data_bank_rec BIGINT DEFAULT 0;
+	DECLARE master_data_bank_adv BIGINT DEFAULT 0;
+	DECLARE master_data_cash_rec BIGINT DEFAULT 0;
+	DECLARE master_data_cash_exp BIGINT DEFAULT 0;
+	DECLARE master_data_cash_adv BIGINT DEFAULT 0;
+	DECLARE obdata_budget_name varchar(100) DEFAULT "";
+	DECLARE obdata_scheme_name varchar(100) DEFAULT "";
+	DECLARE obdata_amt_rec BIGINT DEFAULT 0;
+	DECLARE obdata_amt_pay BIGINT DEFAULT 0;
+	
+	DECLARE master_data_AR BIGINT DEFAULT 0;
+	DECLARE master_data_AP BIGINT DEFAULT 0;
+	DECLARE master_data_PR BIGINT DEFAULT 0;
+	DECLARE master_data_PP BIGINT DEFAULT 0;
+	DECLARE master_data_trxn_date DATE;
+	DECLARE master_data_trxn_name varchar(255) DEFAULT "";
+	DECLARE master_data_insert_flag INTEGER DEFAULT 0;
+	
+	DECLARE master_ob_cash BIGINT DEFAULT 0;
+	DECLARE master_ob_bank BIGINT DEFAULT 0;
+	DECLARE master_ob_adv BIGINT DEFAULT 0;
+	DECLARE master_ob_pl BIGINT DEFAULT 0;
+	DECLARE master_ob_tot BIGINT DEFAULT 0;
+	
+	DECLARE master_cb_cash BIGINT DEFAULT 0;
+	DECLARE master_cb_bank BIGINT DEFAULT 0;
+	DECLARE master_cb_pl BIGINT DEFAULT 0;
+	DECLARE master_cb_adv BIGINT DEFAULT 0;
+	DECLARE master_tot_cb BIGINT DEFAULT 0;
+
+	DECLARE master_ob_cash_next BIGINT DEFAULT 0;
+	DECLARE master_ob_bank_next BIGINT DEFAULT 0;
+	DECLARE master_ob_pl_next BIGINT DEFAULT 0;
+	DECLARE master_ob_adv_next BIGINT DEFAULT 0;
+	DECLARE master_ob_tot_next BIGINT DEFAULT 0;
+
+
+	begin
+		-- declare cursor for fetching total received and total paid record from obmaster_master_view
+		DECLARE cursorRecordForOb CURSOR FOR SELECT scheme_name, budget_name, amt_rec, amt_pay FROM obmaster_master_view;
+
+		-- declare NOT FOUND handler
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished_curRecordsOb = 1;
+	
+		OPEN cursorRecordForOb;
+		getTotalObSum: LOOP
+			FETCH  cursorRecordForOb INTO obdata_scheme_name, obdata_budget_name, obdata_amt_rec, obdata_amt_pay;
+			IF finished_curRecordsOb = 1 THEN 
+				LEAVE getTotalObSum;
+			END IF;
+			SET master_ob_tot = master_ob_tot + obdata_amt_rec;
+			IF obdata_budget_name = "CASH" THEN
+				SET master_ob_cash = master_ob_cash + obdata_amt_rec;
+			ELSEIF obdata_budget_name = "BANK" THEN
+				SET master_ob_bank = master_ob_bank + obdata_amt_rec;
+			ELSEIF obdata_budget_name = "ADVANCE" THEN
+				SET master_ob_adv = master_ob_adv + obdata_amt_rec;
+			ELSEIF obdata_budget_name = "PL" THEN
+				SET master_ob_pl = master_ob_pl + obdata_amt_rec;
+			END IF;
+		END LOOP getTotalObSum;	
+		/*INSERT INTO master_date (ob_cash, ob_bank, ob_adv, ob_pl,ob_tot, scheme_name, cash_rev, cash_exp, bank_rev, bank_exp, pl_rev, pl_exp, adv_rev, adv_exp, entry_date) 
+		values (master_ob_cash, master_ob_bank, master_ob_adv, master_ob_pl, master_ob_tot, data_scheme_name, master_data_CR, master_data_CP, master_data_BR, 
+		master_data_BP, master_data_PR, master_data_PP, master_data_AR, master_data_AP, check_date);
+		INSERT INTO master_date (ob_cash, ob_bank, ob_adv, ob_pl,ob_tot, scheme_name) values 
+		(master_ob_cash, master_ob_bank, master_ob_adv, master_ob_pl, master_ob_tot, 'SCHEME1');*/
+		CLOSE cursorRecordForOb;
+	end;
+
+	begin
+	-- declare cursor for fetching records for a particular date from outward_vchentry_view
+	DECLARE curRecordsForDate CURSOR FOR SELECT scheme_name, vch_ty, vch_type, amount_rec, amount_pay, acc_id, vch_date 
+	FROM inword_vchentry_view WHERE vch_date = check_date;
+
+	-- declare NOT FOUND handler
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished_curRecords = 1;
+	
+
+	OPEN curRecordsForDate;
+	getCurRecordsForDate: LOOP
+		FETCH curRecordsForDate INTO data_scheme_name, data_vch_ty, data_vch_type, data_amount_rec, data_amount_pay, data_acc_id,  data_vch_date;
+		IF finished_curRecords = 1 THEN 
+			LEAVE getCurRecordsForDate;
+		END IF;
+		-- Build getCurRecordsForDate list.
+		-- Add various schemes in IF and ELSEIF loops.
+		IF (data_vch_type = "BP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "EXP") THEN 
+			SET master_data_bank_exp = master_data_bank_exp + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "BR" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "BAN") THEN 
+			SET master_data_bank_rec = master_data_bank_rec + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "BP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "ADV") THEN 
+			SET master_data_bank_adv = master_data_bank_adv + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "BP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "LIB") THEN 
+			SET master_data_bank_adv = master_data_bank_adv + data_amount_rec;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "CR" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "CAS") THEN 
+			SET master_data_cash_rec = master_data_cash_rec + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "CP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "EXP") THEN 
+			SET master_data_cash_exp = master_data_cash_exp + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "CP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "ADV") THEN 
+			SET master_data_cash_adv = master_data_cash_adv + data_amount_pay;
+			SET master_data_insert_flag = 1;
+		ELSEIF (data_vch_type = "CP" AND data_vch_ty = "TO" AND SUBSTR(data_acc_id, 1, 3) = "LIB") THEN 
+			SET master_data_cash_adv = master_data_cash_adv + data_amount_rec;
+			SET master_data_insert_flag = 1;
+		
+		END IF;
+		SET master_data_trxn_date = data_vch_date;
+		SET master_data_trxn_name = CONCAT("Trxns on Date: ", check_date);
+	END LOOP getCurRecordsForDate;
+	IF master_data_insert_flag = 1 THEN
+		IF (NOT EXISTS (SELECT master_date_id from master_date)) THEN
+			SET master_cb_cash = ((master_ob_cash+master_data_cash_rec)-master_data_cash_exp);
+			SET master_cb_bank = ((master_ob_bank+master_data_bank_rec)-master_data_bank_exp);
+			/*SET master_cb_pl = ((master_ob_pl+master_data_PR)-master_data_PP); add this to master_tot_cb*/
+			SET master_cb_adv = ((master_ob_adv+master_data_bank_adv)+master_data_cash_adv);
+			SET master_tot_cb = (master_cb_cash+master_cb_bank+master_cb_adv);
+			
+			INSERT INTO master_date (ob_cash, ob_bank, ob_adv, ob_tot, cash_rec, cash_exp, cash_adv, bank_rec, bank_exp, bank_adv, cb_cash, cb_bank, cb_adv, tot_cb, entry_date) values (master_ob_cash, master_ob_bank, master_ob_adv, master_ob_tot, master_data_cash_rec, master_data_cash_exp, master_data_cash_adv, master_data_bank_rec, master_data_bank_exp, master_data_bank_adv, master_cb_cash, master_cb_bank, master_cb_adv, master_tot_cb, check_date);
+		ELSE
+			SELECT cb_cash, cb_bank, cb_adv, tot_cb INTO master_ob_cash_next, master_ob_bank_next, master_ob_adv_next, master_ob_tot_next FROM master_date WHERE entry_date=(SELECT entry_date FROM master_date order by entry_date DESC LIMIT 1);
+		
+			SET master_cb_cash = ((master_ob_cash_next+master_data_cash_rec)-master_data_cash_exp);
+			SET master_cb_bank = ((master_ob_bank_next+master_data_bank_rec)-master_data_bank_exp);
+			/*SET master_cb_pl = ((master_ob_pl_next+master_data_PR)-master_data_PP); add this to master_tot_cb*/
+			SET master_cb_adv = ((master_ob_adv_next+master_data_bank_adv)+master_data_cash_adv);
+			SET master_tot_cb = (master_cb_cash+master_cb_bank+master_cb_adv);
+			
+			INSERT INTO master_date (ob_cash, ob_bank, ob_adv, ob_tot, cash_rec, cash_exp, cash_adv, bank_rec, bank_exp, bank_adv, cb_cash, cb_bank, cb_adv, tot_cb, entry_date) values (master_ob_cash_next, master_ob_bank_next, master_ob_adv_next, master_ob_tot_next, master_data_cash_rec, master_data_cash_exp, master_data_cash_adv, master_data_bank_rec, master_data_bank_exp, master_data_bank_adv, master_cb_cash, master_cb_bank, master_cb_adv, master_tot_cb, check_date);
+		END IF;
+	END IF;
+	CLOSE curRecordsForDate;
+	end;
+	
+END$$
+DELIMITER ;
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS loadMasterTbl_dated$$
+CREATE PROCEDURE loadMasterTbl_dated(IN start_date DATE, IN end_date DATE, IN scheme_name_input varchar(255))
+BEGIN
+	DECLARE looping_date DATE;
+	DECLARE start_date_inword DATE;
+	DECLARE end_date_inword DATE;
+
+	CALL reset_loadMasterTbl(scheme_name_input);
+	SELECT DISTINCT vch_date INTO start_date_inword FROM inword_vchentry_view ivv  order by ivv.vch_date ASC LIMIT 1;
+	SELECT DISTINCT vch_date INTO end_date_inword FROM inword_vchentry_view ivv  order by ivv.vch_date DESC LIMIT 1;
+	SET looping_date = start_date_inword;
+	WHILE looping_date <= end_date_inword DO
+	CALL loadMasterTbl(looping_date);	
+	/*// @a gives you the result of innerproc*/
+	SET looping_date = DATE_ADD(looping_date, INTERVAL 1 DAY);
+	END WHILE;
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS reset_loadMasterTbl$$
+CREATE PROCEDURE reset_loadMasterTbl(IN scheme_name_input varchar(255))
+BEGIN	
+	TRUNCATE TABLE master_date;
+	TRUNCATE TABLE inword_vchentry_view;
+	TRUNCATE TABLE obmaster_master_view;
+	
+	SET @scheme_name_input := scheme_name_input;
+	
+	SET @inword_vchentry_view = CONCAT("INSERT INTO inword_vchentry_view(scheme_name, vchno, vch_ty, vch_type, acc_id, account_desc, amount_rec, amount_pay, vch_date) SELECT scheme_name, vchno, vch_ty, vch_type, acc_id, account_desc, amount_rec, amount_pay, vch_date from  inword_vchentry where scheme_name = ? ORDER by vch_date");
+
+	SET @obmaster_master_view = CONCAT("INSERT INTO obmaster_master_view(scheme_id, scheme_name, budget_id, budget_name, acc_id, acc_name, 		amt_rec, amt_pay) SELECT scheme_id, scheme_name, budget_id, budget_name, acc_id, acc_name, amt_rec, amt_pay from  obmaster_master where scheme_name = ?");
+	
+	PREPARE stmt3 FROM @inword_vchentry_view;
+	EXECUTE stmt3 USING @scheme_name_input; -- <-- input for placeholder
+	DEALLOCATE PREPARE stmt3;
+
+	PREPARE stmt3 FROM @obmaster_master_view;
+	EXECUTE stmt3 USING @scheme_name_input; -- <-- input for placeholder
+	DEALLOCATE PREPARE stmt3;
+	
+END$$
+DELIMITER ;
+
+DROP TABLE IF EXISTS inword_vchentry_view;
+CREATE TABLE inword_vchentry_view(
+  `inword_view_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `scheme_name` varchar(45) NOT NULL,
+  `vchno` varchar(45) NOT NULL,
+  `vch_ty` varchar(45) NOT NULL,
+  `account_desc` varchar(45) NOT NULL,
+  `amount_rec` decimal(10,0) NOT NULL,
+  `amount_pay` decimal(10,0) NOT NULL,
+  `acc_id` varchar(45) NOT NULL,
+  `vch_type` varchar(45) NOT NULL,
+  `vch_date` date NOT NULL,
+   PRIMARY KEY (inword_view_id));
+
+DROP TABLE IF EXISTS obmaster_master_view;
+CREATE TABLE obmaster_master_view (
+  `obmaster_view_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `scheme_id` varchar(255) NOT NULL,
+  `scheme_name` varchar(255) NOT NULL,
+  `budget_id` varchar(255) NOT NULL,
+  `budget_name` varchar(255) NOT NULL,
+  `acc_id` varchar(255) NOT NULL,
+  `acc_name` varchar(255) NOT NULL,
+  `amt_rec` decimal(10,2) NOT NULL,
+  `amt_pay` decimal(10,2) NOT NULL,
+  PRIMARY KEY (obmaster_view_id)); 
+
+CALL copytbl();
+
+#SET @schemaList = ""; 
+#CALL loadMasterTbl('2023-02-04', @schemaList); 
+#SELECT @schemaList;
+
+#SET @schemaList = ""; 
+#CALL loadMasterTbl_dated('2023-02-03','2023-02-07', @schemaList);
+#SELECT @schemaList;
+
+#SET @schemaList = ""; 
+#CALL reset_loadMasterTbl('SCHEME1', @schemaList);
+#SELECT @schemaList;
+
+#SET @schemaList = ""; 
+CALL loadMasterTbl_dated('2023-02-21','2023-02-23', 'SCHEME1', @schemaList );
+#SELECT @schemaList;
+
+
+CALL loadMasterTbl_dated('2023-02-21','2023-02-23', 'SCHEME1');

@@ -1,0 +1,59 @@
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: account_plus
+-- ------------------------------------------------------
+-- Server version	8.0.34
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `outward_vchentry_view`
+--
+
+DROP TABLE IF EXISTS `outward_vchentry_view`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `outward_vchentry_view` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `scheme_name` varchar(255) NOT NULL,
+  `vch_no` varchar(20) NOT NULL,
+  `vch_type` varchar(255) NOT NULL,
+  `chq_no` varchar(255) DEFAULT NULL,
+  `chq_date` date DEFAULT (curdate()),
+  `bank_name` varchar(255) NOT NULL,
+  `vch_desc` varchar(255) NOT NULL,
+  `vch_date` date DEFAULT (curdate()),
+  `total_Amount` decimal(10,0) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `outward_vchentry_view`
+--
+
+LOCK TABLES `outward_vchentry_view` WRITE;
+/*!40000 ALTER TABLE `outward_vchentry_view` DISABLE KEYS */;
+INSERT INTO `outward_vchentry_view` VALUES (95,'MLALAD','C/001','CP','NIL','2023-12-14','NIL','BEING THE AMOUNT PAID TO ASHOK BEHERA FOR EXP','2023-12-14',3000),(96,'MLALAD','C/002','CP','NIL','2023-12-19','NILL','','2023-12-19',1000),(97,'MLALAD','CR/001','CR','NIL','2023-12-24','NIL','','2023-12-24',10000),(98,'MLALAD','BANK/001','BP','NIL','2023-12-17','NIL','BEING THE AMOUNT PAID TO BDO KHORDHA','2023-12-17',15000),(99,'MLALAD','BANK/2','BP','NIL','2023-12-17','NIL','','2023-12-17',50500),(100,'MLALAD','BANK/3','BP','NIL','2023-12-18','NIL','BEING THE AMOUNT PAID TO BDO BOLAGARH','2023-12-18',75000),(101,'MLALAD','BANK/4','BP','NIL','2023-12-19','NIL','BEING THE AMOUNT PAID TO BDO BALIANTA','2023-12-19',145000),(102,'MLALAD','BANK/5','BR','NIL','2023-12-24','NIL','','2023-12-24',10000),(103,'MLALAD','BANK/6','BP','NIL','2023-12-25','BANK','','2023-12-25',46500),(113,'MLALAD','bnk/010','BR','nil','2023-12-25','nil','interest','2023-12-25',9500),(114,'MLALAD','bank/011','BR','nil','2023-12-25','nil','grant in aid','2023-12-25',400000),(115,'MLALAD','bnk/012','BR','nil','2023-12-26','nil','grant in aid','2023-12-26',60000),(116,'MLALAD','bank/014','BR','nil','2023-12-26','nil','','2023-12-26',50000),(132,'MLALAD','2324/P/100','BP','NIL','2024-01-27','NIL','BEING THE AMOUNT PAID TO ASHOK BEHERA FOR PAYMENT','2023-12-27',150000),(133,'MLALAD','2324/P/500','BP','NIL','2024-01-27','NIL','BEING THE AMOUNT PAID TO BIJAYA BARCK FOR THE PAYMENT','2023-12-27',200000),(134,'MLALAD','2324/510','BP','NIL','2024-01-28','NIL','','2023-12-28',300000),(135,'MLALAD','2324/P-ADV/1','BP','NIL','2024-01-30','NIL','','2024-01-30',1000000),(136,'MLALAD','br/1000','BR','nil','2023-12-30','nil','BEING THE AMOUNT PAID TO AJAY BARICK','2023-12-30',54000),(137,'MLALAD','p908','BP','nil','2024-01-15','nil','bgfd','2024-01-15',100);
+/*!40000 ALTER TABLE `outward_vchentry_view` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-01-21 12:21:06
